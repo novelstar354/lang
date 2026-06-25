@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>STar Language Ultimate</title>
-
+<link rel="icon" href="icon.png" sizes="16x16" type="image/png" />  
 <style>
 
 *{
@@ -139,11 +139,29 @@ nav a:hover::after{
 #menuBtn{
     width:40px;
     height:30px;
-    display:none;
+
+    display:flex;
+
     flex-direction:column;
     justify-content:space-between;
+
     cursor:pointer;
+
+    position:fixed;
+    top:25px;
+    right:25px;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.4s;
+
     z-index:10001;
+}
+
+#menuBtn.show{
+    opacity:1;
+    pointer-events:auto;
 }
 
 #menuBtn span{
@@ -323,20 +341,29 @@ footer{
     color:#888;
 }
 
-/* モバイル */
 
-@media(max-width:700px){
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,.05);
+    z-index:1000;
 
-    nav{
-        display:none;
-    }
-
-    #menuBtn{
-        display:flex;
-    }
-
+    transition:
+        transform .4s ease,
+        opacity .4s ease;
 }
 
+header.hide{
+    transform:translateY(-100%);
+    opacity:0;
+}
 </style>
 </head>
 <body>
@@ -950,7 +977,34 @@ function draw(){
     );
 
 }
+let lastScroll = 0;
 
+const header =
+    document.querySelector("header");
+
+window.addEventListener(
+"scroll",
+()=>{
+
+    const current =
+        window.pageYOffset;
+
+    if(current > lastScroll &&
+       current > 100){
+
+        header.classList.add("hide");
+        menuBtn.classList.add("show");
+
+    }else{
+
+        header.classList.remove("hide");
+        menuBtn.classList.remove("show");
+
+    }
+
+    lastScroll = current;
+
+});
 draw();
 
 /* =========================
