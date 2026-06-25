@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>STar Language Ultimate</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#02040a;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* 星空 */
+
+#bg{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+}
+
+/* ローディング */
+
+#loader{
+    position:fixed;
+    inset:0;
+    background:#02040a;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+    transition:1s;
+}
+
+#loader.hide{
+    opacity:0;
+    pointer-events:none;
+}
+
+.spinner{
+    width:80px;
+    height:80px;
+    border:4px solid rgba(255,255,255,.15);
+    border-top:4px solid #4da6ff;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ヘッダー */
+
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,.05);
+    z-index:1000;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    letter-spacing:2px;
+    animation:glow 3s infinite;
+}
+
+.logo span{
+    color:#4da6ff;
+}
+
+@keyframes glow{
+
+    0%,100%{
+        text-shadow:
+        0 0 10px #4da6ff;
+    }
+
+    50%{
+        text-shadow:
+        0 0 30px #4da6ff,
+        0 0 50px #4da6ff;
+    }
+}
+
+nav{
+    display:flex;
+    gap:30px;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    position:relative;
+}
+
+nav a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-6px;
+    width:0;
+    height:2px;
+    background:#4da6ff;
+    transition:.3s;
+}
+
+nav a:hover::after{
+    width:100%;
+}
+
+/* ハンバーガー */
+
+#menuBtn{
+    width:40px;
+    height:30px;
+    display:none;
+    flex-direction:column;
+    justify-content:space-between;
+    cursor:pointer;
+    z-index:10001;
+}
+
+#menuBtn span{
+    height:4px;
+    border-radius:20px;
+    background:white;
+    transition:.4s;
+}
+
+#menuBtn.active span:nth-child(1){
+    transform:
+    translateY(13px)
+    rotate(45deg);
+}
+
+#menuBtn.active span:nth-child(2){
+    opacity:0;
+}
+
+#menuBtn.active span:nth-child(3){
+    transform:
+    translateY(-13px)
+    rotate(-45deg);
+}
+
+#mobileMenu{
+    position:fixed;
+    top:0;
+    right:-320px;
+    width:300px;
+    height:100vh;
+    backdrop-filter:blur(20px);
+    background:rgba(0,0,0,.85);
+    display:flex;
+    flex-direction:column;
+    padding-top:120px;
+    transition:.4s;
+    z-index:999;
+}
+
+#mobileMenu.active{
+    right:0;
+}
+
+#mobileMenu a{
+    color:white;
+    text-decoration:none;
+    padding:20px 40px;
+}
+
+/* Hero */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+.hero h1{
+    font-size:clamp(3rem,8vw,7rem);
+}
+
+.hero span{
+    color:#4da6ff;
+}
+
+.hero p{
+    margin-top:20px;
+    max-width:700px;
+    color:#bbb;
+    font-size:1.2rem;
+}
+
+/* タイピング */
+
+.typing{
+    border-right:3px solid #4da6ff;
+    white-space:nowrap;
+    overflow:hidden;
+}
+
+/* ボタン */
+
+.btn{
+    margin-top:40px;
+    padding:16px 45px;
+    border:none;
+    border-radius:50px;
+    background:#4da6ff;
+    color:white;
+    cursor:pointer;
+    font-size:18px;
+    transition:.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+.btn:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 25px #4da6ff;
+}
+
+/* セクション */
+
+section{
+    padding:120px 10%;
+}
+
+.title{
+    text-align:center;
+    font-size:42px;
+    margin-bottom:60px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+/* カード */
+
+.card{
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:30px;
+    transition:
+    transform .2s,
+    box-shadow .2s;
+}
+
+.card:hover{
+    box-shadow:
+    0 0 30px rgba(77,166,255,.3);
+}
+
+.card h3{
+    margin-bottom:15px;
+}
+
+.code{
+    background:#0f172a;
+    padding:30px;
+    border-radius:20px;
+    overflow:auto;
+}
+
+pre{
+    color:#4ade80;
+}
+
+/* フェード */
+
+.fade{
+    opacity:0;
+    transform:
+    translateY(60px);
+    transition:1s;
+}
+
+.fade.show{
+    opacity:1;
+    transform:
+    translateY(0);
+}
+
+footer{
+    text-align:center;
+    padding:60px;
+    color:#888;
+}
+
+/* モバイル */
+
+@media(max-width:700px){
+
+    nav{
+        display:none;
+    }
+
+    #menuBtn{
+        display:flex;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+    <h2 style="margin-top:25px">
+        Loading STar...
+    </h2>
+</div>
+
+<canvas id="bg"></canvas>
+
+<div id="menuBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<nav id="mobileMenu">
+    <a href="#features">特徴</a>
+    <a href="#code">サンプル</a>
+    <a href="#start">始める</a>
+</nav>
+
+<header>
+
+    <div class="logo">
+        ST<span>ar</span>
+    </div>
+
+    <nav>
+        <a href="#features">特徴</a>
+        <a href="#code">サンプル</a>
+        <a href="#download">ダウンロード</a>
+    </nav>
+
+</header>
+
+<section class="hero fade">
+
+    <h1>
+        ST<span>ar</span> Language
+    </h1>
+
+    <p id="typingText" class="typing">
+    </p>
+
+   <button class="btn"
+onclick="window.location.href='#start'">
+    今すぐ始める
+</button>
+
+</section>
+
+<section id="features" class="fade">
+
+    <h2 class="title">特徴</h2>
+
+    <div class="grid">
+
+        <div class="card tilt">
+            <h3>高速</h3>
+            <p>軽量で高速な実行。</p>
+        </div>
+
+        <div class="card tilt">
+            <h3>学びやすい</h3>
+            <p>初心者向けのシンプルな設計。</p>
+        </div>
+
+        <div class="card tilt">
+            <h3>モダン</h3>
+            <p>クラスや関数など豊富な機能。</p>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="code" class="fade">
+
+<h2 class="title">
+サンプルコード
+</h2>
+
+<div class="code">
+
+<pre>
+func hello(name){
+
+    print "Hello " + name
+
+}
+
+hello("World")
+</pre>
+
+</div>
+
+</section>
+
+<section id="download" class="fade">
+
+<h2 class="title" id="start">
+ダウンロード
+</h2>
+
+<div style="text-align:center">
+
+<button class="btn"
+onclick="window.location.href='https://novelstar354.github.io/program'">
+    Get Start
+</button>
+
+</div>
+
+</section>
+
+<footer>
+© 2026 STar Language
+</footer>
+
+<script>
+/* =========================
+   ローディング
+========================= */
+
+window.addEventListener("load",()=>{
+
+    setTimeout(()=>{
+
+        document
+            .getElementById("loader")
+            .classList.add("hide");
+
+    },1200);
+
+});
+
+/* =========================
+   ハンバーガーメニュー
+========================= */
+
+const menuBtn =
+    document.getElementById("menuBtn");
+
+const mobileMenu =
+    document.getElementById("mobileMenu");
+
+menuBtn.addEventListener("click",()=>{
+
+    menuBtn.classList.toggle("active");
+    mobileMenu.classList.toggle("active");
+
+});
+
+document
+.querySelectorAll("#mobileMenu a")
+.forEach(link=>{
+
+    link.addEventListener("click",()=>{
+
+        menuBtn.classList.remove("active");
+        mobileMenu.classList.remove("active");
+
+    });
+
+});
+
+/* =========================
+   フェードイン
+========================= */
+
+const fades =
+    document.querySelectorAll(".fade");
+
+const observer =
+new IntersectionObserver(entries=>{
+
+    entries.forEach(entry=>{
+
+        if(entry.isIntersecting){
+
+            entry.target.classList.add("show");
+
+        }
+
+    });
+
+},{
+    threshold:.15
+});
+
+fades.forEach(el=>{
+
+    observer.observe(el);
+
+});
+
+/* =========================
+   タイピング
+========================= */
+
+const text =
+"シンプルで高速。そして学びやすい次世代プログラミング言語。";
+
+const typing =
+document.getElementById("typingText");
+
+let typeIndex = 0;
+
+function typeWriter(){
+
+    if(typeIndex < text.length){
+
+        typing.textContent +=
+            text[typeIndex];
+
+        typeIndex++;
+
+        setTimeout(typeWriter,50);
+
+    }
+
+}
+
+typeWriter();
+
+/* =========================
+   星空
+========================= */
+
+const canvas =
+document.getElementById("bg");
+
+const ctx =
+canvas.getContext("2d");
+
+function resize(){
+
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+}
+
+resize();
+
+window.addEventListener(
+"resize",
+resize
+);
+
+let mouse = {
+
+    x:-9999,
+    y:-9999
+
+};
+
+window.addEventListener(
+"mousemove",
+e=>{
+
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+
+});
+
+window.addEventListener(
+"mouseleave",
+()=>{
+
+    mouse.x=-9999;
+    mouse.y=-9999;
+
+});
+
+const stars = [];
+
+for(let i=0;i<300;i++){
+
+    const x =
+        Math.random()*canvas.width;
+
+    const y =
+        Math.random()*canvas.height;
+
+    stars.push({
+
+        x,
+        y,
+
+        ox:x,
+        oy:y,
+
+        r:Math.random()*2+1,
+
+        s:Math.random()*0.4+0.2
+
+    });
+
+}
+
+/* =========================
+   流れ星
+========================= */
+
+const meteors=[];
+
+function createMeteor(){
+
+    meteors.push({
+
+        x:Math.random()*canvas.width,
+
+        y:-50,
+
+        vx:8+Math.random()*5,
+
+        vy:8+Math.random()*5,
+
+        life:0
+
+    });
+
+}
+
+setInterval(()=>{
+
+    if(Math.random()>.5){
+
+        createMeteor();
+
+    }
+
+},3000);
+
+/* =========================
+   カード傾き
+========================= */
+
+document
+.querySelectorAll(".tilt")
+.forEach(card=>{
+
+    card.addEventListener(
+    "mousemove",
+    e=>{
+
+        const rect =
+            card.getBoundingClientRect();
+
+        const x =
+            e.clientX - rect.left;
+
+        const y =
+            e.clientY - rect.top;
+
+        const rx =
+            -(y-rect.height/2)/15;
+
+        const ry =
+            (x-rect.width/2)/15;
+
+        card.style.transform =
+        `rotateX(${rx}deg)
+         rotateY(${ry}deg)
+         translateY(-10px)`;
+
+    });
+
+    card.addEventListener(
+    "mouseleave",
+    ()=>{
+
+        card.style.transform =
+        "";
+
+    });
+
+});
+
+/* =========================
+   描画
+========================= */
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle =
+        "#02040a";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle="white";
+
+    /* 星 */
+
+    for(const star of stars){
+
+        star.y += star.s;
+
+        if(star.y > canvas.height){
+
+            star.y = 0;
+
+            star.x =
+            Math.random()
+            *canvas.width;
+
+            star.ox = star.x;
+            star.oy = star.y;
+
+        }
+
+        const dx =
+            mouse.x-star.x;
+
+        const dy =
+            mouse.y-star.y;
+
+        const dist =
+            Math.sqrt(
+                dx*dx+dy*dy
+            );
+
+        let size =
+            star.r;
+
+        if(dist < 150){
+
+            const force =
+            (150-dist)/150;
+
+            star.x -=
+                dx*0.002*force;
+
+            star.y -=
+                dy*0.002*force;
+
+            size +=
+                force*3;
+
+        }else{
+
+            star.x +=
+            (star.ox-star.x)
+            *0.01;
+
+        }
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+    }
+
+    /* 星座 */
+
+    for(
+        let i=0;
+        i<stars.length;
+        i++
+    ){
+
+        for(
+            let j=i+1;
+            j<stars.length;
+            j++
+        ){
+
+            const dx =
+            stars[i].x-stars[j].x;
+
+            const dy =
+            stars[i].y-stars[j].y;
+
+            const dist =
+            Math.sqrt(
+                dx*dx+dy*dy
+            );
+
+            if(dist < 120){
+
+                let alpha =
+                (120-dist)/120;
+
+                const mx =
+                (stars[i].x+
+                 stars[j].x)/2;
+
+                const my =
+                (stars[i].y+
+                 stars[j].y)/2;
+
+                const md =
+                Math.hypot(
+                    mouse.x-mx,
+                    mouse.y-my
+                );
+
+                if(md < 180){
+
+                    alpha *= 2.5;
+
+                }
+
+                alpha =
+                Math.min(
+                    alpha,
+                    1
+                );
+
+                ctx.beginPath();
+
+                ctx.strokeStyle =
+                `rgba(
+                    255,
+                    255,
+                    255,
+                    ${alpha}
+                )`;
+
+                ctx.lineWidth=.5;
+
+                ctx.moveTo(
+                    stars[i].x,
+                    stars[i].y
+                );
+
+                ctx.lineTo(
+                    stars[j].x,
+                    stars[j].y
+                );
+
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+    /* 流れ星 */
+
+    for(
+        let i=meteors.length-1;
+        i>=0;
+        i--
+    ){
+
+        const m =
+            meteors[i];
+
+        m.x += m.vx;
+        m.y += m.vy;
+
+        m.life++;
+
+        ctx.beginPath();
+
+        ctx.strokeStyle =
+        "rgba(255,255,255,.8)";
+
+        ctx.lineWidth = 2;
+
+        ctx.moveTo(
+            m.x,
+            m.y
+        );
+
+        ctx.lineTo(
+            m.x-60,
+            m.y-60
+        );
+
+        ctx.stroke();
+
+        if(
+            m.life > 60
+        ){
+
+            meteors.splice(i,1);
+
+        }
+
+    }
+
+    requestAnimationFrame(
+        draw
+    );
+
+}
+
+draw();
+
+/* =========================
+   パララックス
+========================= */
+
+window.addEventListener(
+"mousemove",
+e=>{
+
+    const x =
+        (e.clientX
+        /innerWidth
+        -0.5)*20;
+
+    const y =
+        (e.clientY
+        /innerHeight
+        -0.5)*20;
+
+    canvas.style.transform =
+    `translate(${x}px,${y}px)`;
+
+});
+</script>
+
+</body>
+</html>
