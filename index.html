@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>STar Language Ultimate</title>
+<title>STar Language</title>
 <link rel="icon" href="icon.png" sizes="16x16" type="image/png" />  
 <style>
 
@@ -502,6 +502,9 @@ window.addEventListener("load",()=>{
             .getElementById("loader")
             .classList.add("hide");
 
+        // ローディング終了後にタイピング開始
+        setTimeout(typeWriter, 500);
+
     },1200);
 
 });
@@ -593,7 +596,6 @@ function typeWriter(){
 
 }
 
-typeWriter();
 
 /* =========================
    星空
